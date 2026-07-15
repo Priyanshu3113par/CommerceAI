@@ -38,4 +38,12 @@ export const productQuerySchema = z.object({
     sort: z.enum(['price_asc', 'price_desc', 'rating', 'newest', 'name']).default('newest'),
     featured: z.coerce.boolean().optional(),
     brand: z.string().optional(),
+    semantic: z.coerce.boolean().optional(),
 });
+export const createCategorySchema = z.object({
+    name: z.string().trim().min(2).max(100),
+    description: z.string().max(500).optional(),
+    image: z.string().url().or(z.string().min(1)).optional(),
+    parent: z.string().optional().nullable(),
+});
+export const updateCategorySchema = createCategorySchema.partial();
