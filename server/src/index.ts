@@ -8,7 +8,7 @@ async function start() {
   await connectRedis();
 
   app.listen(env.PORT, () => {
-    console.log(`CommerceAI server running on port ${env.PORT}`);
+    console.log(`Commerce-AI server running on port ${env.PORT}`);
     console.log(`Environment: ${env.NODE_ENV}`);
   });
 }

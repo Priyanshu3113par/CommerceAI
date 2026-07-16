@@ -38,7 +38,7 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 app.get('/api/health', (_req, res) => {
-  res.json({ success: true, message: 'CommerceAI API is running', timestamp: new Date().toISOString() });
+  res.json({ success: true, message: 'Commerce-AI API is running', timestamp: new Date().toISOString() });
 });
 
 app.use('/api/auth', authRoutes);
