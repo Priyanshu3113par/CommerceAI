@@ -73,6 +73,11 @@ export default function WishlistPage() {
                   alt={product.title}
                   className="h-full w-full object-cover transition group-hover:scale-105"
                 />
+                {discountPercent > 0 && (
+                  <span className="absolute top-2 left-2 rounded bg-rose-600 px-1.5 py-0.5 text-[10px] font-bold text-white shadow-sm">
+                    {discountPercent}% OFF
+                  </span>
+                )}
                 <button
                   onClick={() => removeMutation.mutate(product._id)}
                   disabled={removeMutation.isPending}

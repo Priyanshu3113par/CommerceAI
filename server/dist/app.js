@@ -11,6 +11,7 @@ import cartRoutes from './routes/cart.routes.js';
 import wishlistRoutes from './routes/wishlist.routes.js';
 import orderRoutes from './routes/order.routes.js';
 import adminRoutes from './routes/admin.routes.js';
+//complete imports every page
 const app = express();
 app.use(helmet());
 app.use(cors({
@@ -33,7 +34,7 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 app.get('/api/health', (_req, res) => {
-    res.json({ success: true, message: 'CommerceAI API is running', timestamp: new Date().toISOString() });
+    res.json({ success: true, message: 'Commerce-AI API is running', timestamp: new Date().toISOString() });
 });
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);

@@ -3,6 +3,7 @@ import { env } from './env.js';
 
 export const redisClient = createClient({
   url: env.REDIS_URL || 'redis://localhost:6379',
+  RESP: 2,
 });
 
 redisClient.on('error', (err) => console.error('Redis Client Error', err));

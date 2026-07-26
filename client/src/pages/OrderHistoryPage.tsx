@@ -1,6 +1,6 @@
 import { useLocation, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { CheckCircle, Package, MapPin, Calendar, CreditCard, ExternalLink } from 'lucide-react';
+import { CheckCircle, Package, MapPin, Calendar, CreditCard } from 'lucide-react';
 import { orderApi } from '../services';
 import LoadingSpinner from '../components/LoadingSpinner';
 
@@ -103,7 +103,7 @@ export default function OrderHistoryPage() {
                   <div className="lg:col-span-2 space-y-4">
                     <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Items</h4>
                     <div className="divide-y divide-gray-100">
-                      {order.items.map((item, idx) => (
+                      {order.items.map((item: any, idx: number) => (
                         <div key={idx} className="flex py-3 first:pt-0 last:pb-0 gap-4">
                           <img
                             src={item.image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=100'}
