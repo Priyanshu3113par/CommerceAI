@@ -85,3 +85,8 @@ export const adminApi = {
 
   getInventoryReports: () => api.get<ApiResponse<InventoryReports>>('/admin/inventory'),
 };
+
+export const aiApi = {
+  chat: (message: string) =>
+    api.post<ApiResponse<{ message: string; products: Product[] }>>('/ai/chat', { message }),
+};
