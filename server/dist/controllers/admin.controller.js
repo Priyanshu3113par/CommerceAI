@@ -1,8 +1,12 @@
 import { Order } from '../models/Order.js';
 import { Product } from '../models/Product.js';
 import { User } from '../models/User.js';
+import { getFallbackDashboardStats, getFallbackSalesReports, getFallbackInventoryReports, isFallbackMode } from '../config/fallbackStore.js';
 export async function getDashboardStats(req, res, next) {
     try {
+        if (isFallbackMode()) {
+            return res.json({ success: true, data: getFallbackDashboardStats() });
+        }
         const [orderStatsResult, customerCount, lowStockCount, totalProductCount] = await Promise.all([
             Order.aggregate([
                 { $match: { paymentStatus: { $in: ['paid', 'pending'] }, status: { $ne: 'cancelled' } } },
@@ -42,6 +46,9 @@ export async function getDashboardStats(req, res, next) {
 }
 export async function getSalesReports(req, res, next) {
     try {
+        if (isFallbackMode()) {
+            return res.json({ success: true, data: getFallbackSalesReports() });
+        }
         const [salesByCategory, monthlySales] = await Promise.all([
             Order.aggregate([
                 { $match: { paymentStatus: 'paid', status: { $ne: 'cancelled' } } },
@@ -114,6 +121,9 @@ export async function getSalesReports(req, res, next) {
 }
 export async function getInventoryReports(req, res, next) {
     try {
+        if (isFallbackMode()) {
+            return res.json({ success: true, data: getFallbackInventoryReports() });
+        }
         const [inventoryStatsResult, lowStockItems] = await Promise.all([
             Product.aggregate([
                 { $match: { isActive: true } },

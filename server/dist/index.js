@@ -10,4 +10,4 @@ async function start() {
         console.log(`Environment: ${env.NODE_ENV}`);
     });
 }
-start();
+void start();

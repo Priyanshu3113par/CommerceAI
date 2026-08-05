@@ -1,8 +1,12 @@
 import { Category } from '../models/Category.js';
 import { slugify } from '../utils/helpers.js';
 import { NotFoundError, ConflictError } from '../utils/errors.js';
+import { getFallbackCategories, isFallbackMode } from '../config/fallbackStore.js';
 export class CategoryService {
     async findAll() {
+        if (isFallbackMode()) {
+            return getFallbackCategories();
+        }
         return Category.find({ isActive: true }).sort({ name: 1 }).lean();
     }
     async findBySlug(slug) {

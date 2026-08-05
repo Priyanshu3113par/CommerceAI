@@ -2,10 +2,28 @@ import { Request, Response, NextFunction } from 'express';
 import { Cart } from '../models/Cart.js';
 import { Product } from '../models/Product.js';
 import { NotFoundError, ValidationError } from '../utils/errors.js';
+import { getFallbackCart, getOrCreateFallbackCart, updateFallbackCart, isFallbackMode } from '../config/fallbackStore.js';
 
 export async function getCart(req: Request, res: Response, next: NextFunction) {
   try {
     const userId = req.user?.userId;
+    if (isFallbackMode()) {
+      const cart = getFallbackCart(userId!);
+      const items = cart.items.map((item) => ({
+        product: {
+          _id: item.product,
+          title: item.product,
+          price: item.price,
+          images: [],
+          stock: 99,
+          slug: item.product,
+        },
+        quantity: item.quantity,
+        price: item.price,
+      }));
+      return res.json({ success: true, data: { _id: cart._id, user: cart.user, items, subtotal: 0, shipping: 0, tax: 0, total: 0 } });
+    }
+
     let cart = await Cart.findOne({ user: userId });
     
     if (!cart) {

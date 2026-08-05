@@ -2,10 +2,16 @@ import { Request, Response, NextFunction } from 'express';
 import { Wishlist } from '../models/Wishlist.js';
 import { Product } from '../models/Product.js';
 import { NotFoundError, ValidationError } from '../utils/errors.js';
+import { getOrCreateFallbackWishlist, updateFallbackWishlist, isFallbackMode } from '../config/fallbackStore.js';
 
 export async function getWishlist(req: Request, res: Response, next: NextFunction) {
   try {
     const userId = req.user?.userId;
+    if (isFallbackMode()) {
+      const wishlist = getOrCreateFallbackWishlist(userId!);
+      return res.json({ success: true, data: wishlist.products });
+    }
+
     let wishlist = await Wishlist.findOne({ user: userId }).populate({
       path: 'products',
       model: 'Product',

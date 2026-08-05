@@ -5,6 +5,14 @@ import { slugify } from '../utils/helpers.js';
 import { NotFoundError, ConflictError } from '../utils/errors.js';
 import { getCache, setCache, delCache, invalidateProducts } from '../config/redis.js';
 import { getEmbedding } from './embedding.service.js';
+import {
+  getFallbackProducts,
+  getFallbackProductBySlug,
+  createFallbackProduct,
+  updateFallbackProduct,
+  deleteFallbackProduct,
+  isFallbackMode,
+} from '../config/fallbackStore.js';
 
 interface ProductQuery {
   page: number;
@@ -29,6 +37,10 @@ export class ProductService {
       } catch {
         // Fallback if parsing fails
       }
+    }
+
+    if (isFallbackMode()) {
+      return getFallbackProducts(query);
     }
 
     const { page, limit, search, category, minPrice, maxPrice, sort, featured, brand, semantic } = query;
@@ -131,6 +143,12 @@ export class ProductService {
       }
     }
 
+    if (isFallbackMode()) {
+      const product = getFallbackProductBySlug(slug);
+      if (!product) throw new NotFoundError('Product not found');
+      return product;
+    }
+
     const product = await Product.findOne({ slug, isActive: true })
       .populate('category', 'name slug')
       .lean();
@@ -161,6 +179,10 @@ export class ProductService {
   }
 
   async create(data: Record<string, unknown>) {
+    if (isFallbackMode()) {
+      return createFallbackProduct(data);
+    }
+
     const slug = slugify(data.title as string);
     const existing = await Product.findOne({ slug });
     if (existing) throw new ConflictError('Product with this title already exists');
@@ -177,6 +199,12 @@ export class ProductService {
   }
 
   async update(id: string, data: Record<string, unknown>) {
+    if (isFallbackMode()) {
+      const updated = updateFallbackProduct(id, data);
+      if (!updated) throw new NotFoundError('Product not found');
+      return updated;
+    }
+
     if (data.title) {
       data.slug = slugify(data.title as string);
     }
@@ -207,6 +235,12 @@ export class ProductService {
   }
 
   async delete(id: string) {
+    if (isFallbackMode()) {
+      const deleted = deleteFallbackProduct(id);
+      if (!deleted) throw new NotFoundError('Product not found');
+      return { success: true };
+    }
+
     const product = await Product.findByIdAndUpdate(id, { isActive: false }, { new: true });
     if (!product) throw new NotFoundError('Product not found');
 
